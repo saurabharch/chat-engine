@@ -15,7 +15,8 @@ const rename = require('gulp-rename');
 const surge = require('gulp-surge');
 
 let sourceFiles = ['src/**/*.js'];
-let testFiles = ['test/unit/**/*.js', 'test/integration/**/*.js'];
+let unitTestFiles = ['test/unit/**/*.js'];
+let integrationTestFiles = ['test/integration/**/*.js'];
 let pluginFiles = [
     '../chat-engine-uploadcare/src/plugin.js',
     '../chat-engine-typing-indicator/src/plugin.js',
@@ -47,12 +48,12 @@ gulp.task('clean', () => {
         .pipe(clean());
 });
 
-gulp.task('deploy', [], function () {
-  return surge({
-    project: './setup',         // Path to your static build directory
-    domain: 'ce-setup.surge.sh'  // Your domain or Surge subdomain
-  })
-})
+gulp.task('deploy', [], () => {
+    return surge({
+        project: './setup', // Path to your static build directory
+        domain: 'ce-setup.surge.sh' // Your domain or Surge subdomain
+    });
+});
 
 gulp.task('minify_code', () => {
     return gulp.src('dist/chat-engine.js')
@@ -69,14 +70,20 @@ gulp.task('lint_code', [], () => {
 });
 
 gulp.task('lint_tests', [], () => {
-    return gulp.src(testFiles)
+    return gulp.src(unitTestFiles.concat(integrationTestFiles))
         .pipe(eslint())
         .pipe(eslint.format())
         .pipe(eslint.failAfterError());
 });
 
-gulp.task('run_tests', () => {
-    return gulp.src(testFiles, { read: false })
+gulp.task('run_unit_tests', () => {
+    return gulp.src(unitTestFiles, { read: false })
+        .pipe(mocha({ reporter: 'spec' }))
+        .pipe(istanbul.writeReports());
+});
+
+gulp.task('run_integration_tests', () => {
+    return gulp.src(integrationTestFiles, { read: false })
         .pipe(mocha({ reporter: 'spec' }))
         .pipe(istanbul.writeReports());
 });
@@ -92,7 +99,7 @@ gulp.task('pre-test', () => {
 });
 
 gulp.task('test', () => {
-    runSequence('pre-test', 'run_tests', 'validate', () => {
+    runSequence('pre-test', 'run_unit_tests', 'run_integration_tests', 'validate', () => {
         process.exit();
     });
 });
