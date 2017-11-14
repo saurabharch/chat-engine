@@ -40,13 +40,12 @@ describe('#emitter', () => {
             return {
                 namespace: 'demo',
                 extends: {
-                    User: extension,
-                    Me: extension
+                    Emitter: extension
                 }
             };
         };
 
-        emitterInstance.plugin(plugin);
+        emitterInstance.plugin(plugin());
         assert(emitterInstance.plugins.length === 1, 'plugin works!');
         done();
     });
@@ -94,5 +93,86 @@ describe('#emitter', () => {
         assert(emitterInstance.demo_plugin.get('stringKey') === 'plugin state', 'got the expected value');
 
         done();
+    });
+
+    it('should not allow to overwrite a plugin', (done) => {
+        let plugin1 = () => {
+            class extension {
+                construct() {
+                    this.set('stringKey', 'plugin state');
+                }
+            }
+
+            return {
+                namespace: 'demo_plugin',
+                extends: {
+                    Emitter: extension
+                }
+            };
+        };
+
+        let plugin2 = () => {
+            class extension {
+                construct() {
+                    this.set('stringKey', 'new plugin state');
+                }
+            }
+
+            return {
+                namespace: 'demo_plugin',
+                extends: {
+                    Emitter: extension
+                }
+            };
+        };
+
+        emitterInstance.plugin(plugin1());
+        emitterInstance.plugin(plugin2(), (result) => {
+            assert(!result, 'got the expected value');
+            assert(emitterInstance.demo_plugin.get('stringKey') === 'plugin state', 'got the expected value');
+
+            done();
+        });
+    });
+
+    it('should remove a plugin', (done) => {
+        let plugin = () => {
+            class extension {
+            }
+
+            return {
+                namespace: 'demo_plugin',
+                extends: {
+                    Emitter: extension
+                }
+            };
+        };
+
+        emitterInstance.plugin(plugin());
+        emitterInstance.removePlugin(plugin(), (result) => {
+            assert(result, 'got the expected value');
+            assert(emitterInstance.plugins.length === 0, 'got the expected value');
+
+            done();
+        });
+    });
+
+    it('should not remove a plugin no longer available', (done) => {
+        let plugin = () => {
+            class extension {
+            }
+
+            return {
+                namespace: 'demo_plugin',
+                extends: {
+                    Emitter: extension
+                }
+            };
+        };
+
+        emitterInstance.removePlugin(plugin(), (result) => {
+            assert(!result, 'got the expected value');
+            done();
+        });
     });
 });

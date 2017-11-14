@@ -100,6 +100,12 @@ class Emitter extends RootEmitter {
         childOb.set = this.set.bind(this._dataset[childName]);
     }
 
+    // remove an object as a subobject under an namespace
+    removeChild(childName) {
+        delete this[childName];
+        delete this._dataset[childName];
+    }
+
     get(key) {
         return this[key];
     }
@@ -115,31 +121,73 @@ class Emitter extends RootEmitter {
     /**
      Binds a plugin to this object
      @param {Object} module The plugin module
+     @param {Function} callback
      @tutorial using
      */
-    plugin(module) {
-
-        // add this plugin to a list of plugins for this object
-        this.plugins.push(module);
-
-        // see if there are plugins to attach to this class
-        if (module.extends && module.extends[this.name]) {
-            // attach the plugins to this class
-            // under their namespace
-            this.addChild(module.namespace, new module.extends[this.name]());
-
-            this[module.namespace].ChatEngine = this.chatEngine;
-
-            // if the plugin has a special construct function
-            // run it
-            if (this[module.namespace].construct) {
-                this[module.namespace].construct();
+    plugin(module, callback) {
+        function invokeCallback(result) {
+            if (callback) {
+                callback(result);
             }
+        }
 
+        if (!this[module.namespace]) {
+            // add this plugin to a list of plugins for this object
+            this.plugins.push(module);
+
+            // see if there are plugins to attach to this class
+            if (module.extends && module.extends[this.name]) {
+                // attach the plugins to this class
+                // under their namespace
+                this.addChild(module.namespace, new module.extends[this.name]());
+
+                this[module.namespace].ChatEngine = this.chatEngine;
+
+                // if the plugin has a special construct function
+                // run it
+                if (this[module.namespace].construct) {
+                    this[module.namespace].construct();
+                }
+
+                invokeCallback(true);
+            } else {
+                invokeCallback(false);
+            }
+        } else {
+            invokeCallback(false);
         }
 
         return this;
+    }
 
+    /**
+     unBinds a plugin to this object
+     @param {Object} module The plugin module
+     @param {Function} callback
+     @tutorial using
+     */
+    removePlugin(module, callback) {
+        function invokeCallback(result) {
+            if (callback) {
+                callback(result);
+            }
+        }
+
+        if (this[module.namespace]) {
+            let index = this.plugins.findIndex((plugin) => {
+                return plugin.namespace === module.namespace;
+            });
+
+            this.plugins.splice(index, 1);
+
+            this.removeChild(module.namespace);
+
+            invokeCallback(true);
+        } else {
+            invokeCallback(false);
+        }
+
+        return this;
     }
 
     bindProtoPlugins() {
