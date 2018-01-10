@@ -31,7 +31,6 @@ class Chat extends Emitter {
 
         /**
         * Classify the chat within some group, Valid options are 'system', 'fixed', or 'custom'.
-        * @type Boolean
         * @readonly
         * @private
         */
@@ -84,8 +83,17 @@ class Chat extends Emitter {
 
         /**
          * Keep a record if we've every successfully connected to this chat before.
+         * @type {Boolean}
          */
         this.hasConnected = false;
+
+        /**
+         * If user manually disconnects via {@link ChatEngine#disconnect}, the
+         * chat is put to "sleep". If a connection is reestablished
+         * via {@link ChatEngine#reconnect}, sleeping chats reconnect automatically.
+         * @type {Boolean}
+         */
+        this.asleep = false;
 
         this.chatEngine.chats[this.channel] = this;
 
@@ -558,6 +566,15 @@ class Chat extends Emitter {
     }
 
     /**
+     * Fires upon disconnection from the network through any means.
+     * @private
+     */
+    onDisconnected() {
+        this.connected = false;
+        this.trigger('$.disconnected');
+    }
+
+    /**
      * @private
      */
     onConnectionReady() {
@@ -688,6 +705,34 @@ class Chat extends Emitter {
                 .catch(next);
 
         });
+
+    }
+
+    /**
+     * Called by {@link ChatEngine#disconnect}. Fires disconnection notifications
+     * and stores "sleep" state in memory. Sleep means the Chat was previously connected.
+     * @private
+     */
+    sleep() {
+
+        if (this.connected) {
+            this.onDisconnected();
+            this.asleep = true;
+        }
+    }
+
+    /**
+     * Called by {@link ChatEngine#reconnect}. Wakes the Chat up from sleep state.
+     * Re-authenticates with the server, and fires connection events once established.
+     * @private
+     */
+    wake() {
+
+        if (this.asleep) {
+            this.handshake(() => {
+                this.onConnected();
+            });
+        }
 
     }
 
