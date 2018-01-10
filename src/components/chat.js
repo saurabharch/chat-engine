@@ -549,11 +549,19 @@ class Chat extends Emitter {
     }
 
     /**
+    * Fired upon successful connection to the network through any means..
+    * @private
+    */
+    onConnected() {
+        this.connected = true;
+        this.trigger('$.connected');
+    }
+
+    /**
      * @private
      */
     onConnectionReady() {
 
-        this.connected = true;
         this.hasConnected = true;
 
         /**
@@ -564,7 +572,7 @@ class Chat extends Emitter {
          *     console.log('chat is ready to go!');
          * });
          */
-        this.trigger('$.connected');
+        this.onConnected();
 
         this.chatEngine.me.sync.emit('$.session.chat.join', { subject: this.objectify() });
 
@@ -611,7 +619,7 @@ class Chat extends Emitter {
      * // connect to the chat when we feel like it
      * chat.connect();
      */
-    connect() {
+    handshake(callback) {
 
         async.waterfall([
             (next) => {
@@ -642,22 +650,43 @@ class Chat extends Emitter {
             (next) => {
 
                 this.chatEngine.request('get', 'chat', {}, { channel: this.channel })
-                    .then((response) => {
-
-                        if (response.data.found) {
-                            this.meta = response.data.chat.meta;
-                        } else {
-                            this.update(this.meta);
-                        }
-
-                        this.onConnectionReady();
-
-                    })
+                    .then(callback)
                     .catch(next);
 
             }
         ], (error) => {
             this.chatEngine.throwError(this, 'trigger', 'auth', new Error('Something went wrong while making a request to authentication server.'), { error });
+        });
+
+    }
+
+    /**
+     * Connect to PubNub servers to initialize the chat.
+     * @example
+     * // create a new chatroom, but don't connect to it automatically
+     * let chat = new Chat('some-chat', false)
+     *
+     * // connect to the chat when we feel like it
+     * chat.connect();
+     */
+    connect() {
+
+        this.handshake((next) => {
+
+            this.chatEngine.request('get', 'chat', {}, { channel: this.channel })
+                .then((response) => {
+
+                    if (response.data.found) {
+                        this.meta = response.data.chat.meta;
+                    } else {
+                        this.update(this.meta);
+                    }
+
+                    this.onConnectionReady();
+
+                })
+                .catch(next);
+
         });
 
     }
