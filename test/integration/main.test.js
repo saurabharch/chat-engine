@@ -91,28 +91,28 @@ describe('setup', () => {
         assert.isObject(ChatEngineCore, 'was successfully created');
     });
 
-    // it('Should populate history tests', function populateSecondHistory(done) {
+    it('Should populate history tests', function populateSecondHistory(done) {
 
-    //     this.timeout(80000);
+        this.timeout(80000);
 
-    //     let k = new ChatEngine.moc'chat-history', false);
+        let k = new ChatEngine.Chat('chat-history', false);
 
-    //     for (let i = 0; i < 200; i++) {
+        for (let i = 0; i < 200; i++) {
 
-    //         k.emit('tester', {
-    //             text: 'hello world ' + i
-    //         });
-    //         k.emit('not-tester', {
-    //             text: 'hello world ' + i
-    //         });
+            k.emit('tester', {
+                text: 'hello world ' + i
+            });
+            k.emit('not-tester', {
+                text: 'hello world ' + i
+            });
 
-    //     }
+        }
 
-    //     setTimeout(() => {
-    //         done();
-    //     }, 60000);
+        setTimeout(() => {
+            done();
+        }, 60000);
 
-    // });
+    });
 
 });
 
