@@ -573,7 +573,7 @@ module.exports = (ceConfig = {}, pnConfig = {}) => {
         // connects to the global chatroom
         ChatEngine.pnConfig.uuid = uuid;
         ChatEngine.pnConfig.authKey = authKey;
-        ChatEngine.onConfig.keepAlive = true;
+        ChatEngine.pnConfig.keepAlive = true;
 
         ChatEngine.handshake(() => {
             ChatEngine.firstConnect(state);
