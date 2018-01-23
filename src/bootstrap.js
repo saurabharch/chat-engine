@@ -29,6 +29,8 @@ module.exports = (ceConfig = {}, pnConfig = {}) => {
     ChatEngine.ceConfig.endpoint = ChatEngine.ceConfig.endpoint || 'https://pubsub.pubnub.com/v1/blocks/sub-key/' + ChatEngine.pnConfig.subscribeKey + '/chat-engine-server';
     ChatEngine.ceConfig.globalChannel = ChatEngine.ceConfig.globalChannel || 'chat-engine-global';
 
+    console.log('this globalChannel is', ChatEngine.ceConfig.globalChannel);
+
     if (typeof ChatEngine.ceConfig.enableSync === 'undefined') {
         ChatEngine.ceConfig.enableSync = false;
     }
@@ -408,15 +410,9 @@ module.exports = (ceConfig = {}, pnConfig = {}) => {
              *     let me = data.me;
              * })
              */
-
-             setTimeout(() => {
-
-                ChatEngine._emit('$.ready', {
-                    me: ChatEngine.me
-                });
-
-             }, 5000);
-
+            ChatEngine._emit('$.ready', {
+                me: ChatEngine.me
+            });
 
             ChatEngine.ready = true;
 
