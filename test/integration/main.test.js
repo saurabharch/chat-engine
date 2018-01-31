@@ -118,27 +118,7 @@ function createChatEngineHistory(done) {
         throwErrors: true
     });
     ChatEngineHistory.connect(yousername, { works: true }, yousername);
-    ChatEngineHistory.on('$.ready', () => {
-        done();
-    });
-
-}
-
-function createChatEngineConnect(done) {
-
-    this.timeout(bootTimeout);
-
-    ChatEngineConnect = require('../../src/index.js').create({
-        publishKey: pubkey,
-        subscribeKey: subkey
-    }, {
-        globalChannel,
-        throwErrors: true
-    });
-    ChatEngineConnect.connect(username, { works: true }, username);
-    ChatEngineConnect.on('$.ready', () => {
-        done();
-    });
+    ChatEngineHistory.on('$.ready', () => done());
 
 }
 
@@ -189,7 +169,6 @@ describe('connect', () => {
     it('should notify chatengine on created', function join(done) {
 
         this.timeout(testTimeout);
-
         let newChat = 'this-is-only-a-test-3' + new Date().getTime();
         let a = false;
 
@@ -204,7 +183,6 @@ describe('connect', () => {
         });
 
         a = new ChatEngine.Chat(newChat);
-
         a.on('$.connected', () => a.leave());
 
     });
@@ -282,7 +260,6 @@ describe('chat', () => {
     it('should get message', function shouldGetMessage(done) {
 
         this.timeout(testTimeout);
-
         let chat3 = new ChatEngine.Chat('chat-teser3' + new Date().getTime());
 
         chat3.once('something', (payload) => {
@@ -294,9 +271,11 @@ describe('chat', () => {
 
         chat3.on('$.connected', () => {
 
-            chat3.emit('something', {
-                text: 'hello world'
-            });
+            setTimeout(() => {
+                chat3.emit('something', {
+                    text: 'hello world'
+                });
+            }, 1000);
 
         });
 
@@ -431,7 +410,6 @@ describe('remote chat list', () => {
     it('should be populated', function shouldBePopulated(done) {
 
         this.timeout(testTimeout);
-
         ChatEngineSync.me.once('$.session.group.restored', (payload) => {
 
             assert.isObject(ChatEngineSync.me.session[payload.group]);
@@ -478,7 +456,6 @@ describe('invite', () => {
         let privChannel = 'predictable-secret-channel';
 
         this.timeout(testTimeout);
-
         yourChat = new ChatEngineYou.Chat(privChannel, true);
 
         yourChat.on('$.connected', () => yourChat.invite(ChatEngine.me));
