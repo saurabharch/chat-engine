@@ -176,11 +176,7 @@ function createChatEngineConnect(done) {
     });
     ChatEngineConnect.connect(username, { works: true }, username);
     ChatEngineConnect.on('$.ready', () => {
-
-        setTimeout(() => {
-            done();
-        }, 30000);
-
+        done();
     });
 
 }
