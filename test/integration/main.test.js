@@ -21,8 +21,6 @@ let version = process.version.replace(/\./g, '-');
 
 function reset(done) {
 
-    this.timeout(60000);
-
     globalChannel = ['test', version, iterations].join('-');
     username = ['ian', version, iterations].join('-');
     yousername = ['stephen', version, iterations].join('-');
