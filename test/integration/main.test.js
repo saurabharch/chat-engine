@@ -15,8 +15,6 @@ let globalChannel;
 let username;
 let yousername;
 
-let instances = [ChatEngine, ChatEngineYou, ChatEngineClone, ChatEngineSync, ChatEngineHistory, ChatEngineConnect];
-
 let iterations = 0;
 
 let version = process.version.replace(/\./g, '-');
@@ -28,6 +26,8 @@ function reset(done) {
     globalChannel = ['test', version, iterations].join('-');
     username = ['ian', version, iterations].join('-');
     yousername = ['stephen', version, iterations].join('-');
+
+    iterations++;
 
     decache('../../src/index.js');
 
