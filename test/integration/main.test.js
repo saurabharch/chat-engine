@@ -255,14 +255,6 @@ describe('connect', () => {
 
         a = new ChatEngine.Chat(newChat);
 
-        a.on('$.connected', () => {
-
-            setTimeout(() => {
-                a.leave();
-            }, 1000);
-
-        });
-
     });
 
     it('should notify chatengine on connected', function join(done) {
@@ -356,6 +348,7 @@ describe('chat', () => {
 
         chat3.on('$.connected', () => {
 
+            // it's possible to emit this before the channel has actually made it into the channel group
             setTimeout(() => {
                 chat3.emit('something', {
                     text: 'hello world'
@@ -405,23 +398,19 @@ describe('history', () => {
 
         chatHistory.on('$.connected', () => {
 
-            setTimeout(() => {
+            chatHistory.search({
+                event: 'tester',
+                limit: 50
+            }).on('tester', (a) => {
 
-                chatHistory.search({
-                    event: 'tester',
-                    limit: 50
-                }).on('tester', (a) => {
+                assert.equal(a.event, 'tester');
 
-                    assert.equal(a.event, 'tester');
+                count += 1;
 
-                    count += 1;
-
-                }).on('$.search.finish', () => {
-                    assert.equal(count, 50, 'correct # of results');
-                    done();
-                });
-
-            }, 5000);
+            }).on('$.search.finish', () => {
+                assert.equal(count, 50, 'correct # of results');
+                done();
+            });
 
         });
 
@@ -437,22 +426,18 @@ describe('history', () => {
 
         chatHistory2.on('$.connected', () => {
 
-            setTimeout(() => {
+            chatHistory2.search({
+                event: 'tester',
+                limit: 200
+            }).on('tester', (a) => {
 
-                chatHistory2.search({
-                    event: 'tester',
-                    limit: 200
-                }).on('tester', (a) => {
+                assert.equal(a.event, 'tester');
+                count += 1;
 
-                    assert.equal(a.event, 'tester');
-                    count += 1;
-
-                }).on('$.search.finish', () => {
-                    assert.equal(count, 200, 'correct # of results');
-                    done();
-                });
-
-            }, 5000);
+            }).on('$.search.finish', () => {
+                assert.equal(count, 200, 'correct # of results');
+                done();
+            });
 
         });
 
@@ -647,16 +632,11 @@ describe('connection management', () => {
 
         chat2.on('$.connected', () => {
 
-            // old chat may still be trying to call here_now
-            setTimeout(() => {
+            chat2.once('$.disconnected', () => {
+                done();
+            });
 
-                chat2.once('$.disconnected', () => {
-                    done();
-                });
-
-                ChatEngineConnect.disconnect();
-
-            }, 5000);
+            ChatEngineConnect.disconnect();
 
         });
 
@@ -672,9 +652,7 @@ describe('connection management', () => {
             done();
         });
 
-        setTimeout(() => {
-            ChatEngineConnect.reauthorize(authKey);
-        }, 5000);
+        ChatEngineConnect.reauthorize(authKey);
 
     });
 
