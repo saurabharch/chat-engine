@@ -163,28 +163,6 @@ function createChatEngineHistory(done) {
 
 }
 
-function createChatEngineConnect(done) {
-
-    this.timeout(60000);
-
-    ChatEngineConnect = require('../../src/index.js').create({
-        publishKey: pubkey,
-        subscribeKey: subkey
-    }, {
-        globalChannel,
-        throwErrors: true
-    });
-    ChatEngineConnect.connect(username, { works: true }, username);
-    ChatEngineConnect.on('$.ready', () => {
-
-        setTimeout(() => {
-            done();
-        }, 30000);
-
-    });
-
-}
-
 let examplePlugin = () => {
 
     class extension {
@@ -599,82 +577,6 @@ describe('invite', () => {
             });
 
         });
-
-    });
-
-});
-
-describe('connection management', () => {
-
-    beforeEach(reset);
-    beforeEach(createChatEngineConnect);
-
-    it('change user', function beIdentified(done) {
-
-        this.timeout(60000);
-
-        let newUsername = ['stephen-new', version, iterations].join('-');
-
-        ChatEngineConnect.once('$.disconnected', () => {
-
-            ChatEngineConnect = require('../../src/index.js').create({
-                publishKey: pubkey,
-                subscribeKey: subkey
-            }, {
-                globalChannel,
-                throwErrors: true
-            });
-
-            ChatEngineConnect.once('$.ready', () => {
-
-                done();
-
-            });
-
-            ChatEngineConnect.connect(newUsername, {}, newUsername);
-
-        });
-
-        ChatEngineConnect.disconnect();
-
-    });
-
-    it('should disconnect', function beIdentified(done) {
-
-        this.timeout(60000);
-
-        let chat2 = new ChatEngineConnect.Chat('disconnect' + new Date().getTime());
-
-        chat2.on('$.connected', () => {
-
-            // old chat may still be trying to call here_now
-            setTimeout(() => {
-
-                chat2.once('$.disconnected', () => {
-                    done();
-                });
-
-                ChatEngineConnect.disconnect();
-
-            }, 5000);
-
-        });
-
-    });
-
-    it('should refresh auth', function beIdentified(done) {
-
-        this.timeout(120000);
-
-        let authKey = new Date().getTime();
-
-        ChatEngineConnect.once('$.connected', () => {
-            done();
-        });
-
-        setTimeout(() => {
-            ChatEngineConnect.reauthorize(authKey);
-        }, 5000);
 
     });
 
