@@ -228,6 +228,37 @@ describe('connect', () => {
 
     });
 
+    it('should notify chatengine on created private', function join(done) {
+
+        this.timeout(60000);
+
+        let newChat = 'this-is-only-a-test-3' + new Date().getTime();
+        let a = false;
+
+        ChatEngine.on('$.created.chat', (data, source) => {
+
+            let lookingFor = globalChannel + '#chat#private.#' + newChat;
+
+            console.log(lookingFor)
+
+            if (source.channel === lookingFor) {
+                done();
+            }
+
+        });
+
+        a = new ChatEngine.Chat(newChat, true);
+
+        a.on('$.connected', () => {
+
+            setTimeout(() => {
+                a.leave();
+            }, 1000);
+
+        });
+
+    });
+
     it('should notify chatengine on connected', function join(done) {
 
         this.timeout(60000);
