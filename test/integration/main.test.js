@@ -34,7 +34,10 @@ function reset(done) {
     decache('pubnub');
     decache('../../src/index.js');
 
-    done();
+    setTimeout(() => {
+        done();
+    }, 10000);
+
 
 }
 
