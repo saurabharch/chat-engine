@@ -1,3 +1,5 @@
+console.info('ITS THE NEW VERSION')
+
 const init = require('./bootstrap');
 
 /**

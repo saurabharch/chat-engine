@@ -726,7 +726,6 @@ class Chat extends Emitter {
             },
             (next) => {
 
-
                 if (this.chatEngine.ceConfig.enableMeta) {
 
                     this.chatEngine.request('get', 'chat', {}, { channel: this.channel })
