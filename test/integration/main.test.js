@@ -793,41 +793,41 @@ describe('remote chat list', () => {
 
     });
 
-    it('should be populated', function shouldBePopulated(done) {
-
-        this.timeout(60000);
-
-        ChatEngineSync.me.session.once('$.group.restored', (payload) => {
-
-            assert.isObject(ChatEngineSync.me.session.chats[payload.group]);
-            done();
-
-        });
-
-    });
-
-    // it('should get delete event', function deleteSync(done) {
+    // it('should be populated', function shouldBePopulated(done) {
     //
     //     this.timeout(60000);
     //
-    //     let newChannel2 = 'sync-chat2' + new Date().getTime();
-    //     let syncChat;
+    //     ChatEngineSync.me.session.once('$.group.restored', (payload) => {
     //
-    //     ChatEngineSync.me.session.on('$.chat.leave', (payload) => {
-    //
-    //         if (payload.chat.channel.indexOf(newChannel2) > -1) {
-    //             done();
-    //         }
+    //         assert.isObject(ChatEngineSync.me.session.chats[payload.group]);
+    //         done();
     //
     //     });
     //
-    //     syncChat = new ChatEngineClone.Chat(newChannel2);
-    //
-    //     setTimeout(() => {
-    //         syncChat.leave();
-    //     }, 5000);
-    //
     // });
+
+    it('should get delete event', function deleteSync(done) {
+
+        this.timeout(60000);
+
+        let newChannel2 = 'sync-chat2' + new Date().getTime();
+        let syncChat;
+
+        ChatEngineSync.me.session.on('$.chat.leave', (payload) => {
+
+            if (payload.chat.channel.indexOf(newChannel2) > -1) {
+                done();
+            }
+
+        });
+
+        syncChat = new ChatEngineClone.Chat(newChannel2);
+
+        setTimeout(() => {
+            syncChat.leave();
+        }, 5000);
+
+    });
 
 });
 
