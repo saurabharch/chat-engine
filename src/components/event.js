@@ -84,6 +84,7 @@ class Event extends Emitter {
                  * There was a problem publishing over the PubNub network.
                  * @event Chat#$"."error"."publish
                  */
+                console.log(response);
                 this.chatEngine.throwError(this, '_emit', 'emitter', new Error('There was a problem publishing over the PubNub network.'), status);
             }
 
@@ -94,4 +95,3 @@ class Event extends Emitter {
 }
 
 module.exports = Event;
-
