@@ -59,7 +59,8 @@ class Event extends Emitter {
     publish(m) {
 
         m.event = this.event;
-
+        console.log(m);
+        console.log(this.channel)
         this.chatEngine.pubnub.publish({
             message: m,
             channel: this.channel
