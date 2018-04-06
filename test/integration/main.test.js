@@ -793,18 +793,18 @@ describe('remote chat list', () => {
 
     });
 
-    // it('should be populated', function shouldBePopulated(done) {
-    //
-    //     this.timeout(60000);
-    //
-    //     ChatEngineSync.me.session.once('$.group.restored', (payload) => {
-    //
-    //         assert.isObject(ChatEngineSync.me.session.chats[payload.group]);
-    //         done();
-    //
-    //     });
-    //
-    // });
+    it('should be populated', function shouldBePopulated(done) {
+
+        this.timeout(60000);
+
+        ChatEngineSync.me.session.once('$.group.restored', (payload) => {
+
+            assert.isObject(ChatEngineSync.me.session.chats[payload.group]);
+            done();
+
+        });
+
+    });
 
     it('should get delete event', function deleteSync(done) {
 
