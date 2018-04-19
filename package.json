@@ -3,7 +3,8 @@
   "name": "chat-engine",
   "version": "0.9.10",
   "description": "ChatEngine",
-  "main": "dist/chat-engine.js",
+  "main": "src/index.js",
+  "browser": "dist/chat-engine.js",
   "scripts": {
     "build": "gulp",
     "deploy": "gulp; npm publish;",

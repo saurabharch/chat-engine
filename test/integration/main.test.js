@@ -21,6 +21,8 @@ let iterations = 0;
 
 let version = process.version.replace(/\./g, '-');
 
+let path = '../../src/index.js';
+
 function reset(done) {
 
     this.timeout(60000);
@@ -32,7 +34,7 @@ function reset(done) {
     iterations++;
 
     decache('pubnub');
-    decache('../../src/index.js');
+    decache(path);
 
     done();
 
@@ -42,7 +44,7 @@ function createChatEngine(done) {
 
     this.timeout(60000);
 
-    ChatEngine = require('../../src/index.js').create({
+    ChatEngine = require(path).create({
         publishKey: pubkey,
         subscribeKey: subkey
     }, {
@@ -60,7 +62,7 @@ function createChatEngineSync(done) {
 
     this.timeout(60000);
 
-    ChatEngineSync = require('../../src/index.js').create({
+    ChatEngineSync = require(path).create({
         publishKey: pubkey,
         subscribeKey: subkey
     }, {
@@ -81,7 +83,7 @@ function createChatEngineClone(done) {
 
     this.timeout(60000);
 
-    ChatEngineClone = require('../../src/index.js').create({
+    ChatEngineClone = require(path).create({
         publishKey: pubkey,
         subscribeKey: subkey
     }, {
@@ -100,7 +102,7 @@ function createChatEngineYou(done) {
 
     this.timeout(60000);
 
-    ChatEngineYou = require('../../src/index.js').create({
+    ChatEngineYou = require(path).create({
         publishKey: pubkey,
         subscribeKey: subkey
     }, {
@@ -118,7 +120,7 @@ function createChatEngineHistory(done) {
 
     this.timeout(60000);
 
-    ChatEngineHistory = require('../../src/index.js').create({
+    ChatEngineHistory = require(path).create({
         publishKey: pubkey,
         subscribeKey: subkey
     }, {
@@ -136,7 +138,7 @@ function createChatEngineConnect(done) {
 
     this.timeout(60000);
 
-    ChatEngineConnect = require('../../src/index.js').create({
+    ChatEngineConnect = require(path).create({
         publishKey: pubkey,
         subscribeKey: subkey
     }, {
@@ -158,7 +160,7 @@ function createChatEngineMeta(done) {
 
     this.timeout(60000);
 
-    ChatEngine = require('../../src/index.js').create({
+    ChatEngine = require(path).create({
         publishKey: pubkey,
         subscribeKey: subkey
     }, {
@@ -817,7 +819,7 @@ describe('connection management', () => {
 
         ChatEngineConnect.once('$.disconnected', () => {
 
-            ChatEngineConnect = require('../../src/index.js').create({
+            ChatEngineConnect = require(path).create({
                 publishKey: pubkey,
                 subscribeKey: subkey
             }, {
